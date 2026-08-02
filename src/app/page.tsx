@@ -3,8 +3,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Sparkles, Filter, BookOpen, Layers, QrCode, UserCheck, RefreshCw, GraduationCap, LogOut, ChevronLeft, ChevronRight, Hash } from 'lucide-react';
-import { Navbar } from '@/components/Navbar';
-import { Footer } from '@/components/Footer';
+
+import { HillsinaiNavbar } from '@/components/HillsinaiNavbar';
+import { HillsinaiHero } from '@/components/HillsinaiHero';
+import { HillsinaiFeatureBar } from '@/components/HillsinaiFeatureBar';
+import { HillsinaiAboutSection } from '@/components/HillsinaiAboutSection';
+import { HillsinaiFooter } from '@/components/HillsinaiFooter';
+
 import { BookCard } from '@/components/BookCard';
 import { BookDetailModal } from '@/components/BookDetailModal';
 import { StudentIdentifyModal, StudentInfo } from '@/components/StudentIdentifyModal';
@@ -157,37 +162,62 @@ export default function PublicCatalogPage() {
   }, [filteredBooks, currentPage, itemsPerPage]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#050814]">
-      <Navbar />
+    <div className="min-h-screen flex flex-col bg-[#F9F6F0]">
+      {/* Hillsinai Custom Navbar matching Screenshot */}
+      <HillsinaiNavbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      {/* Hillsinai Custom Hero Banner matching Screenshot */}
+      <HillsinaiHero />
+
+      {/* Hillsinai 4 Pillars Feature Bar matching Screenshot */}
+      <HillsinaiFeatureBar />
+
+      {/* Hillsinai About Section */}
+      <HillsinaiAboutSection />
+
+      {/* Main Library Catalog Section */}
+      <main id="catalog" className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        
+        {/* Section Title */}
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#E2D5C3] text-[#8A6539] text-xs font-sans-hillsinai font-bold border border-[#D4C4B0] mb-3">
+            <Sparkles className="w-3.5 h-3.5" /> Physical Acquisitions Catalog
+          </div>
+          <h2 className="font-serif-hillsinai text-3xl sm:text-5xl font-bold text-[#2B1D15] tracking-tight">
+            Search Our Complete Collection
+          </h2>
+          <p className="font-sans-hillsinai text-xs sm:text-sm text-[#6E5A4C] mt-2">
+            Explore 550+ physical book acquisitions (English HE001-HE238 &amp; Malayalam HM 01-HM 315). Check shelf locations, copy status, and log registrations.
+          </p>
+        </div>
+
         {/* Student Check-In Banner Bar */}
-        <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-[#2A1D17] text-white border border-[#453228] shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
           {student ? (
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-bold shadow-inner">
+              <div className="w-11 h-11 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center font-bold shadow-inner">
                 <UserCheck className="w-6 h-6" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-white text-sm">{student.name}</span>
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
                     <GraduationCap className="w-3 h-3" /> {student.studentClass}
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 font-mono mt-0.5">
-                  ID: <span className="text-emerald-400 font-semibold">{student.studentId}</span> • Checked In
+                <p className="text-xs text-amber-200/70 font-mono mt-0.5">
+                  ID: <span className="text-emerald-400 font-semibold">{student.studentId}</span> • Student Checked In
                 </p>
               </div>
             </div>
           ) : (
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center font-bold">
+              <div className="w-11 h-11 rounded-2xl bg-[#3D2B22] border border-[#523C30] text-amber-300 flex items-center justify-center font-bold">
                 <QrCode className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="font-bold text-white text-sm">Identify Student for Borrowing</h3>
-                <p className="text-xs text-slate-400">Scan student card QR or enter Name &amp; Class to request books.</p>
+                <h3 className="font-bold text-amber-100 text-sm">Student Identification Check-In</h3>
+                <p className="text-xs text-amber-200/70">Scan card QR or enter Name &amp; Class to register book loans.</p>
               </div>
             </div>
           )}
@@ -197,13 +227,13 @@ export default function PublicCatalogPage() {
               <>
                 <button
                   onClick={() => setIsStudentModalOpen(true)}
-                  className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+                  className="px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#3D2B22] hover:bg-[#4D3A2F] text-amber-100 border border-[#523C30] transition-colors"
                 >
                   Switch Student
                 </button>
                 <button
                   onClick={handleClearStudent}
-                  className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                  className="p-2 rounded-xl text-amber-200/70 hover:text-rose-400 hover:bg-rose-950/40 transition-colors"
                   title="Clear Check-In"
                 >
                   <LogOut className="w-4 h-4" />
@@ -212,65 +242,49 @@ export default function PublicCatalogPage() {
             ) : (
               <button
                 onClick={() => setIsStudentModalOpen(true)}
-                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
+                className="px-4 py-2.5 rounded-xl text-xs font-bold bg-[#967144] hover:bg-[#805D34] text-white shadow-lg transition-all flex items-center justify-center gap-2 w-full sm:w-auto"
               >
-                <QrCode className="w-4 h-4" /> Scan QR / Enter Name &amp; Class
+                <QrCode className="w-4 h-4" /> Scan QR / Check-In Student
               </button>
             )}
           </div>
         </div>
 
-        {/* Hero Banner */}
-        <div className="relative rounded-3xl p-8 sm:p-12 mb-10 overflow-hidden bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/30 border border-slate-800 shadow-2xl">
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
-          <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-semibold border border-amber-500/20 mb-4">
-              <Sparkles className="w-3.5 h-3.5" /> Oakridge Complete Library Catalog
-            </div>
-            <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
-              Explore 550+ English &amp; Malayalam Books
-            </h1>
-            <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
-              Search our complete inventory of physical library acquisitions (English HE001-HE238 &amp; Malayalam HM 01-HM 315). Track shelf locations, availability, registration codes, and metadata in real-time.
-            </p>
-
-            {/* Search Bar */}
-            <div className="relative max-w-2xl">
-              <Search className="w-5 h-5 text-amber-400 absolute left-4 top-3.5 pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Search by title, author, reg # (e.g. HE001, HM 01, HM 160), or category..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 shadow-xl transition-all"
-              />
-              {search && (
-                <button
-                  onClick={() => setSearch('')}
-                  className="absolute right-3.5 top-3.5 text-xs text-slate-400 hover:text-white px-2 py-1 bg-slate-800 rounded-lg"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-          </div>
+        {/* Search Bar Container */}
+        <div className="relative max-w-3xl mx-auto mb-8">
+          <Search className="w-5 h-5 text-[#8A6539] absolute left-4 top-4 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search by title, author, reg # (e.g. HE001, HM 01, HM 160), or category..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white border border-[#D8C6B0] text-sm sm:text-base text-[#2B1D15] placeholder-[#8A786A] focus:outline-none focus:border-[#8A6539] focus:ring-2 focus:ring-[#8A6539]/20 shadow-md transition-all font-sans-hillsinai"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-3.5 top-3.5 text-xs text-[#6E5A4C] hover:text-[#2B1D15] px-2 py-1 bg-[#EFE8DC] rounded-lg"
+            >
+              Clear
+            </button>
+          )}
         </div>
 
         {/* Quick Range Jump Bar */}
-        <div className="mb-6 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="mb-6 p-4 rounded-2xl bg-white border border-[#E2D5C3] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <Hash className="w-4 h-4 text-amber-400" />
-            <span className="text-xs font-bold text-white uppercase tracking-wider">Quick Reg # Range Jump:</span>
+            <Hash className="w-4 h-4 text-[#8A6539]" />
+            <span className="text-xs font-bold text-[#2B1D15] uppercase tracking-wider font-sans-hillsinai">Quick Reg # Range Jump:</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {REG_RANGES.map((r) => (
               <button
                 key={r.value}
                 onClick={() => setSelectedRange(r.value)}
-                className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all font-sans-hillsinai ${
                   selectedRange === r.value
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                    ? 'bg-[#8A6539] text-white font-bold shadow-md'
+                    : 'bg-[#F4EDE2] hover:bg-[#E8DCCB] text-[#4E3D32] border border-[#D8C6B0]'
                 }`}
               >
                 {r.label}
@@ -280,20 +294,20 @@ export default function PublicCatalogPage() {
         </div>
 
         {/* Filter Controls Bar */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 pb-6 border-b border-slate-800/80">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 pb-6 border-b border-[#E2D5C3]">
           {/* Category Pill Filters */}
           <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 no-scrollbar">
-            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
-              <Layers className="w-3.5 h-3.5 text-amber-400" /> Categories:
+            <span className="text-xs font-semibold text-[#6E5A4C] uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1 font-sans-hillsinai">
+              <Layers className="w-3.5 h-3.5 text-[#8A6539]" /> Categories:
             </span>
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all font-sans-hillsinai ${
                   selectedCategory === cat
-                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
-                    : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                    ? 'bg-[#8A6539] text-white font-bold shadow-md'
+                    : 'bg-white hover:bg-[#F4EDE2] text-[#4E3D32] border border-[#D8C6B0]'
                 }`}
               >
                 {cat}
@@ -302,53 +316,53 @@ export default function PublicCatalogPage() {
           </div>
 
           {/* Status Filter, Sort & Display Count */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
-              <Filter className="w-3.5 h-3.5 text-amber-400" />
+          <div className="flex flex-wrap items-center gap-3 font-sans-hillsinai">
+            <div className="flex items-center gap-1.5 bg-white border border-[#D8C6B0] rounded-xl px-3 py-1.5">
+              <Filter className="w-3.5 h-3.5 text-[#8A6539]" />
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
-                className="bg-transparent text-xs text-slate-300 focus:outline-none cursor-pointer"
+                className="bg-transparent text-xs text-[#2B1D15] focus:outline-none cursor-pointer font-medium"
               >
-                <option value="ALL" className="bg-slate-900">All Statuses</option>
-                <option value="available" className="bg-slate-900">Available</option>
-                <option value="checked_out" className="bg-slate-900">Checked Out</option>
-                <option value="damaged" className="bg-slate-900">Damaged</option>
-                <option value="lost" className="bg-slate-900">Lost</option>
+                <option value="ALL">All Statuses</option>
+                <option value="available">Available</option>
+                <option value="checked_out">Checked Out</option>
+                <option value="damaged">Damaged</option>
+                <option value="lost">Lost</option>
               </select>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
-              <span className="text-xs text-slate-400 font-medium">Sort:</span>
+            <div className="flex items-center gap-1.5 bg-white border border-[#D8C6B0] rounded-xl px-3 py-1.5">
+              <span className="text-xs text-[#6E5A4C] font-medium">Sort:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-transparent text-xs text-slate-300 focus:outline-none cursor-pointer"
+                className="bg-transparent text-xs text-[#2B1D15] focus:outline-none cursor-pointer font-medium"
               >
-                <option value="registration_number" className="bg-slate-900">Reg # (HM 01 - HM 315)</option>
-                <option value="title" className="bg-slate-900">Title (A-Z)</option>
-                <option value="author" className="bg-slate-900">Author (A-Z)</option>
-                <option value="created_at" className="bg-slate-900">Newest First</option>
+                <option value="registration_number">Reg # (HE/HM Sequence)</option>
+                <option value="title">Title (A-Z)</option>
+                <option value="author">Author (A-Z)</option>
+                <option value="created_at">Newest First</option>
               </select>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
-              <span className="text-xs text-slate-400 font-medium">Show:</span>
+            <div className="flex items-center gap-1.5 bg-white border border-[#D8C6B0] rounded-xl px-3 py-1.5">
+              <span className="text-xs text-[#6E5A4C] font-medium">Show:</span>
               <select
                 value={itemsPerPage}
                 onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                className="bg-transparent text-xs text-slate-300 focus:outline-none cursor-pointer"
+                className="bg-transparent text-xs text-[#2B1D15] focus:outline-none cursor-pointer font-medium"
               >
-                <option value={24} className="bg-slate-900">24 / page</option>
-                <option value={48} className="bg-slate-900">48 / page</option>
-                <option value={96} className="bg-slate-900">96 / page</option>
-                <option value={-1} className="bg-slate-900">All ({filteredBooks.length})</option>
+                <option value={24}>24 / page</option>
+                <option value={48}>48 / page</option>
+                <option value={96}>96 / page</option>
+                <option value={-1}>All ({filteredBooks.length})</option>
               </select>
             </div>
 
             <button
               onClick={loadCatalog}
-              className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-amber-400 border border-slate-800 transition-colors"
+              className="p-2 rounded-xl bg-white hover:bg-[#F4EDE2] text-[#6E5A4C] hover:text-[#8A6539] border border-[#D8C6B0] transition-colors"
               title="Refresh Catalog"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
@@ -357,9 +371,9 @@ export default function PublicCatalogPage() {
         </div>
 
         {/* Results Header Count */}
-        <div className="flex items-center justify-between mb-6">
-          <p className="text-xs font-medium text-slate-400">
-            Showing <span className="text-amber-400 font-bold">{paginatedBooks.length}</span> of <span className="text-white font-bold">{filteredBooks.length}</span> matching books
+        <div className="flex items-center justify-between mb-6 font-sans-hillsinai">
+          <p className="text-xs font-medium text-[#6E5A4C]">
+            Showing <span className="text-[#8A6539] font-bold">{paginatedBooks.length}</span> of <span className="text-[#2B1D15] font-bold">{filteredBooks.length}</span> matching acquisitions
           </p>
 
           {totalPages > 1 && itemsPerPage > 0 && (
@@ -367,17 +381,17 @@ export default function PublicCatalogPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-amber-400 disabled:opacity-40 transition-colors"
+                className="p-1.5 rounded-lg bg-white border border-[#D8C6B0] text-[#2B1D15] hover:text-[#8A6539] disabled:opacity-40 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-xs font-semibold text-slate-300 font-mono">
+              <span className="text-xs font-semibold text-[#2B1D15] font-mono">
                 Page {currentPage} of {totalPages}
               </span>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-amber-400 disabled:opacity-40 transition-colors"
+                className="p-1.5 rounded-lg bg-white border border-[#D8C6B0] text-[#2B1D15] hover:text-[#8A6539] disabled:opacity-40 transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -389,7 +403,7 @@ export default function PublicCatalogPage() {
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-              <div key={n} className="bg-slate-900 rounded-2xl p-5 border border-slate-800 flex flex-col justify-between h-72">
+              <div key={n} className="bg-white rounded-2xl p-5 border border-[#E2D5C3] flex flex-col justify-between h-72">
                 <div>
                   <div className="flex justify-between items-center mb-4">
                     <div className="w-20 h-5 skeleton rounded-lg" />
@@ -418,23 +432,23 @@ export default function PublicCatalogPage() {
 
             {/* Pagination Controls Footer */}
             {totalPages > 1 && itemsPerPage > 0 && (
-              <div className="flex items-center justify-center gap-3 pt-6 border-t border-slate-800">
+              <div className="flex items-center justify-center gap-3 pt-8 border-t border-[#E2D5C3] font-sans-hillsinai">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-amber-400 disabled:opacity-40 transition-colors flex items-center gap-1"
+                  className="px-4 py-2 rounded-xl bg-white border border-[#D8C6B0] text-xs font-semibold text-[#2B1D15] hover:text-[#8A6539] disabled:opacity-40 transition-colors flex items-center gap-1 shadow-sm"
                 >
                   <ChevronLeft className="w-4 h-4" /> Previous
                 </button>
 
-                <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-400 font-mono">
-                  <span>Page <strong className="text-amber-400">{currentPage}</strong> of <strong className="text-white">{totalPages}</strong></span>
+                <div className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white rounded-xl border border-[#D8C6B0] text-xs text-[#5D4A3E] font-mono shadow-sm">
+                  <span>Page <strong className="text-[#8A6539]">{currentPage}</strong> of <strong className="text-[#2B1D15]">{totalPages}</strong></span>
                 </div>
 
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-amber-400 disabled:opacity-40 transition-colors flex items-center gap-1"
+                  className="px-4 py-2 rounded-xl bg-white border border-[#D8C6B0] text-xs font-semibold text-[#2B1D15] hover:text-[#8A6539] disabled:opacity-40 transition-colors flex items-center gap-1 shadow-sm"
                 >
                   Next <ChevronRight className="w-4 h-4" />
                 </button>
@@ -442,11 +456,11 @@ export default function PublicCatalogPage() {
             )}
           </>
         ) : (
-          <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-12 text-center max-w-lg mx-auto my-12">
-            <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-lg font-bold text-white mb-2">No Matching Books Found</h3>
-            <p className="text-xs text-slate-400 mb-6">
-              We couldn't find any books matching your search filters. Try adjusting your query or resetting category filters.
+          <div className="bg-white border border-[#E2D5C3] rounded-3xl p-12 text-center max-w-lg mx-auto my-12 shadow-sm font-sans-hillsinai">
+            <BookOpen className="w-12 h-12 text-[#8A786A] mx-auto mb-4" />
+            <h3 className="text-lg font-bold text-[#2B1D15] mb-2 font-serif-hillsinai">No Matching Books Found</h3>
+            <p className="text-xs text-[#6E5A4C] mb-6">
+              We couldn't find any books matching your search filters. Try adjusting your query or resetting filters.
             </p>
             <button
               onClick={() => {
@@ -455,7 +469,7 @@ export default function PublicCatalogPage() {
                 setSelectedStatus('ALL');
                 setSelectedRange('ALL');
               }}
-              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-colors"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-[#8A6539] text-white hover:bg-[#775830] transition-colors shadow-md"
             >
               Reset All Filters
             </button>
@@ -463,6 +477,7 @@ export default function PublicCatalogPage() {
         )}
       </main>
 
+      {/* Student Check-In Modal */}
       <StudentIdentifyModal
         isOpen={isStudentModalOpen}
         onClose={() => setIsStudentModalOpen(false)}
@@ -470,6 +485,7 @@ export default function PublicCatalogPage() {
         currentStudent={student}
       />
 
+      {/* Book Metadata & Borrowing Detail Modal */}
       <BookDetailModal
         book={selectedBook}
         onClose={() => setSelectedBook(null)}
@@ -480,7 +496,8 @@ export default function PublicCatalogPage() {
         }}
       />
 
-      <Footer />
+      {/* Hillsinai Custom Footer */}
+      <HillsinaiFooter />
     </div>
   );
 }
