@@ -110,7 +110,32 @@ export const generateLocalRegistrationNumber = (booksList: Book[]): string => {
 };
 
 
+let memoryBooksCache: Book[] | null = null;
+let memoryLogsCache: RegistrationLog[] | null = null;
+
 export async function fetchBooks(): Promise<Book[]> {
+  if (memoryBooksCache && memoryBooksCache.length > 0) {
+    if (isSupabaseConfigured()) {
+      Promise.resolve(
+        createClient()
+          .from('books')
+          .select('*')
+          .order('created_at', { ascending: false })
+      )
+        .then(({ data, error }) => {
+          if (!error && data && data.length > 0) {
+            memoryBooksCache = data as Book[];
+            setStoredBooks(data as Book[]);
+          }
+        })
+        .catch(() => {});
+    }
+    return memoryBooksCache;
+  }
+
+  const stored = getStoredBooks();
+  memoryBooksCache = stored;
+
   if (isSupabaseConfigured()) {
     try {
       const supabase = createClient();
@@ -119,17 +144,41 @@ export async function fetchBooks(): Promise<Book[]> {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
+        memoryBooksCache = data as Book[];
+        setStoredBooks(data as Book[]);
         return data as Book[];
       }
     } catch (e) {
       console.warn('Falling back to local storage strategy:', e);
     }
   }
-  return getStoredBooks();
+  return stored;
 }
 
 export async function fetchRegistrationLogs(): Promise<RegistrationLog[]> {
+  if (memoryLogsCache && memoryLogsCache.length > 0) {
+    if (isSupabaseConfigured()) {
+      Promise.resolve(
+        createClient()
+          .from('registration_log')
+          .select('*, book:books(title, registration_number, author)')
+          .order('created_at', { ascending: false })
+      )
+        .then(({ data, error }) => {
+          if (!error && data && data.length > 0) {
+            memoryLogsCache = data as RegistrationLog[];
+            setStoredLogs(data as RegistrationLog[]);
+          }
+        })
+        .catch(() => {});
+    }
+    return memoryLogsCache;
+  }
+
+  const stored = getStoredLogs();
+  memoryLogsCache = stored;
+
   if (isSupabaseConfigured()) {
     try {
       const supabase = createClient();
@@ -138,14 +187,16 @@ export async function fetchRegistrationLogs(): Promise<RegistrationLog[]> {
         .select('*, book:books(title, registration_number, author)')
         .order('created_at', { ascending: false });
 
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
+        memoryLogsCache = data as RegistrationLog[];
+        setStoredLogs(data as RegistrationLog[]);
         return data as RegistrationLog[];
       }
     } catch (e) {
       console.warn('Falling back to local storage strategy for logs:', e);
     }
   }
-  return getStoredLogs();
+  return stored;
 }
 
 export async function fetchBorrowRecords(): Promise<BorrowRecord[]> {
