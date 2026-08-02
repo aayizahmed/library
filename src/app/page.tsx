@@ -19,12 +19,14 @@ const CATEGORIES = [
   'Non-Fiction',
 ];
 
-const HM_RANGES = [
+const REG_RANGES = [
   { label: 'All IDs', value: 'ALL' },
-  { label: 'HM 01 - 50', value: '1-50' },
-  { label: 'HM 51 - 100', value: '51-100' },
-  { label: 'HM 101 - 200', value: '101-200' },
-  { label: 'HM 201 - 315', value: '201-315' },
+  { label: 'HM 01 - 50', value: 'HM-1-50' },
+  { label: 'HM 51 - 100', value: 'HM-51-100' },
+  { label: 'HM 101 - 200', value: 'HM-101-200' },
+  { label: 'HM 201 - 315', value: 'HM-201-315' },
+  { label: 'HE 001 - 100', value: 'HE-1-100' },
+  { label: 'HE 101 - 238', value: 'HE-101-238' },
 ];
 
 export default function PublicCatalogPage() {
@@ -114,13 +116,17 @@ export default function PublicCatalogPage() {
 
         let matchesRange = true;
         if (selectedRange !== 'ALL') {
+          const isHM = book.registration_number.startsWith('HM');
+          const isHE = book.registration_number.startsWith('HE');
           const digits = book.registration_number.replace(/\D/g, '');
           if (digits) {
             const val = parseInt(digits, 10);
-            if (selectedRange === '1-50') matchesRange = val >= 1 && val <= 50;
-            else if (selectedRange === '51-100') matchesRange = val >= 51 && val <= 100;
-            else if (selectedRange === '101-200') matchesRange = val >= 101 && val <= 200;
-            else if (selectedRange === '201-315') matchesRange = val >= 201 && val <= 315;
+            if (selectedRange === 'HM-1-50') matchesRange = isHM && val >= 1 && val <= 50;
+            else if (selectedRange === 'HM-51-100') matchesRange = isHM && val >= 51 && val <= 100;
+            else if (selectedRange === 'HM-101-200') matchesRange = isHM && val >= 101 && val <= 200;
+            else if (selectedRange === 'HM-201-315') matchesRange = isHM && val >= 201 && val <= 315;
+            else if (selectedRange === 'HE-1-100') matchesRange = isHE && val >= 1 && val <= 100;
+            else if (selectedRange === 'HE-101-238') matchesRange = isHE && val >= 101 && val <= 238;
           }
         }
 
@@ -219,13 +225,13 @@ export default function PublicCatalogPage() {
           <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
           <div className="relative z-10 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-semibold border border-amber-500/20 mb-4">
-              <Sparkles className="w-3.5 h-3.5" /> Oakridge Malayalam Library Catalog
+              <Sparkles className="w-3.5 h-3.5" /> Oakridge Complete Library Catalog
             </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
-              Explore 315+ Malayalam Books &amp; Literature
+              Explore 550+ English &amp; Malayalam Books
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
-              Search our complete inventory of physical library acquisitions (HM 01 to HM 315). Track shelf locations, availability, registration codes, and metadata in real-time.
+              Search our complete inventory of physical library acquisitions (English HE001-HE238 &amp; Malayalam HM 01-HM 315). Track shelf locations, availability, registration codes, and metadata in real-time.
             </p>
 
             {/* Search Bar */}
@@ -233,7 +239,7 @@ export default function PublicCatalogPage() {
               <Search className="w-5 h-5 text-amber-400 absolute left-4 top-3.5 pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search by title, author, reg # (e.g. HM 01, HM 160, HM 315), or category..."
+                placeholder="Search by title, author, reg # (e.g. HE001, HM 01, HM 160), or category..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 shadow-xl transition-all"
@@ -257,7 +263,7 @@ export default function PublicCatalogPage() {
             <span className="text-xs font-bold text-white uppercase tracking-wider">Quick Reg # Range Jump:</span>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            {HM_RANGES.map((r) => (
+            {REG_RANGES.map((r) => (
               <button
                 key={r.value}
                 onClick={() => setSelectedRange(r.value)}

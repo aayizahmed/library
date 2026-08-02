@@ -25,9 +25,9 @@ export const createClient = () => {
 // Hybrid Data Access Layer (Supabase with LocalStorage Fallback)
 // ============================================================================
 
-const LOCAL_BOOKS_KEY = 'school_lib_books_hm315_v5';
-const LOCAL_LOGS_KEY = 'school_lib_logs_hm315_v5';
-const LOCAL_BORROWS_KEY = 'school_lib_borrows_hm315_v5';
+const LOCAL_BOOKS_KEY = 'school_lib_books_v6_all553';
+const LOCAL_LOGS_KEY = 'school_lib_logs_v6_all553';
+const LOCAL_BORROWS_KEY = 'school_lib_borrows_v6_all553';
 
 const getStoredBooks = (): Book[] => {
   if (typeof window === 'undefined') return INITIAL_BOOKS;
@@ -38,7 +38,7 @@ const getStoredBooks = (): Book[] => {
   }
   try {
     const parsed = JSON.parse(data);
-    if (Array.isArray(parsed) && parsed.length > 0 && (!parsed[0].registration_number?.startsWith('HM') || parsed.length < 300)) {
+    if (Array.isArray(parsed) && parsed.length > 0 && parsed.length < 500) {
       localStorage.setItem(LOCAL_BOOKS_KEY, JSON.stringify(INITIAL_BOOKS));
       return INITIAL_BOOKS;
     }
