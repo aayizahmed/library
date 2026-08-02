@@ -41,7 +41,7 @@ export interface Book {
   updated_at: string;
 }
 
-export type ActionType = 'registered' | 'updated' | 'status_changed' | 'retired' | 'student_registration';
+export type ActionType = 'registered' | 'updated' | 'status_changed' | 'retired' | 'student_registration' | 'status_update';
 
 export interface RegistrationLog {
   id: string;

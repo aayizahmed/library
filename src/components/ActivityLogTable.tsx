@@ -55,6 +55,7 @@ export function ActivityLogTable({ logs }: ActivityLogTableProps) {
             <CheckCircle2 className="w-3.5 h-3.5" /> Book Acquisition Registered
           </span>
         );
+      case 'status_update':
       case 'status_changed':
         return (
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30">
