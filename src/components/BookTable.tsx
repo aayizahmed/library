@@ -33,7 +33,11 @@ export function BookTable({ books, onEditBook, onBookUpdated }: BookTableProps) 
           book.registration_number.toLowerCase().includes(search.toLowerCase()) ||
           (book.isbn && book.isbn.toLowerCase().includes(search.toLowerCase()));
 
-        const matchesCategory = categoryFilter === 'ALL' || book.category === categoryFilter;
+        const matchesCategory =
+          categoryFilter === 'ALL' ||
+          book.category === categoryFilter ||
+          (categoryFilter === 'Fiction' && (book.category === 'Fiction' || !!book.description?.includes('Genre: Fiction'))) ||
+          (categoryFilter === 'Non-Fiction' && (book.category === 'Non-Fiction' || !!book.description?.includes('Genre: Non-Fiction')));
         const matchesStatus = statusFilter === 'ALL' || book.status === statusFilter;
 
         return matchesSearch && matchesCategory && matchesStatus;

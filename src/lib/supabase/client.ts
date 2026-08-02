@@ -25,9 +25,9 @@ export const createClient = () => {
 // Hybrid Data Access Layer (Supabase with LocalStorage Fallback)
 // ============================================================================
 
-const LOCAL_BOOKS_KEY = 'school_lib_books_he238_single_v3';
-const LOCAL_LOGS_KEY = 'school_lib_logs_he238_single_v3';
-const LOCAL_BORROWS_KEY = 'school_lib_borrows_he238_single_v3';
+const LOCAL_BOOKS_KEY = 'school_lib_books_hm315_v5';
+const LOCAL_LOGS_KEY = 'school_lib_logs_hm315_v5';
+const LOCAL_BORROWS_KEY = 'school_lib_borrows_hm315_v5';
 
 const getStoredBooks = (): Book[] => {
   if (typeof window === 'undefined') return INITIAL_BOOKS;
@@ -38,7 +38,7 @@ const getStoredBooks = (): Book[] => {
   }
   try {
     const parsed = JSON.parse(data);
-    if (Array.isArray(parsed) && parsed.length > 0 && (parsed[0].registration_number?.startsWith('LIB-') || parsed[0].total_copies > 1)) {
+    if (Array.isArray(parsed) && parsed.length > 0 && (!parsed[0].registration_number?.startsWith('HM') || parsed.length < 300)) {
       localStorage.setItem(LOCAL_BOOKS_KEY, JSON.stringify(INITIAL_BOOKS));
       return INITIAL_BOOKS;
     }
@@ -103,11 +103,10 @@ const setStoredLogs = (logs: RegistrationLog[]) => {
   }
 };
 
-// Helper to auto-generate registration numbers locally (e.g. HE239, HE240...)
+// Helper to auto-generate registration numbers locally (e.g. HM 316, HM 317...)
 export const generateLocalRegistrationNumber = (booksList: Book[]): string => {
   const count = booksList.length + 1;
-  const padded = String(count).padStart(3, '0');
-  return `HE${padded}`;
+  return `HM ${count}`;
 };
 
 

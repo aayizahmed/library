@@ -50,6 +50,8 @@ export function BookCard({ book, onSelect }: BookCardProps) {
 
   const getCategoryGradient = (category: string) => {
     switch (category.toLowerCase()) {
+      case 'malayalam':
+        return 'from-emerald-600/30 to-teal-500/20 border-emerald-500/30';
       case 'fiction':
         return 'from-purple-600/30 to-indigo-500/20 border-purple-500/30';
       case 'non-fiction':

@@ -14,6 +14,7 @@ import { useToast } from '@/context/ToastContext';
 
 const CATEGORIES = [
   'ALL',
+  'Malayalam',
   'Fiction',
   'Non-Fiction',
 ];
@@ -87,7 +88,11 @@ export default function PublicCatalogPage() {
           book.registration_number.toLowerCase().includes(search.toLowerCase()) ||
           (book.isbn && book.isbn.toLowerCase().includes(search.toLowerCase()));
 
-        const matchesCategory = selectedCategory === 'ALL' || book.category === selectedCategory;
+        const matchesCategory =
+          selectedCategory === 'ALL' ||
+          book.category === selectedCategory ||
+          (selectedCategory === 'Fiction' && (book.category === 'Fiction' || !!book.description?.includes('Genre: Fiction'))) ||
+          (selectedCategory === 'Non-Fiction' && (book.category === 'Non-Fiction' || !!book.description?.includes('Genre: Non-Fiction')));
         const matchesStatus = selectedStatus === 'ALL' || book.status === selectedStatus;
 
         return matchesSearch && matchesCategory && matchesStatus;

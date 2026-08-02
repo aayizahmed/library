@@ -1,7 +1,9 @@
 export type BookStatus = 'available' | 'checked_out' | 'lost' | 'damaged' | 'retired';
 
 export type BookCategory = 
+  | 'Malayalam'
   | 'Fiction' 
+  | 'Non-Fiction'
   | 'Science' 
   | 'Technology' 
   | 'Mathematics' 

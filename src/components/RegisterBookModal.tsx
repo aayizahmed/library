@@ -14,7 +14,9 @@ interface RegisterBookModalProps {
 }
 
 const CATEGORIES = [
+  'Malayalam',
   'Fiction',
+  'Non-Fiction',
   'Science',
   'Technology',
   'Mathematics',
