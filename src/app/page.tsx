@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Sparkles, Filter, BookOpen, Layers, QrCode, UserCheck, RefreshCw, GraduationCap, LogOut } from 'lucide-react';
+import { Search, Sparkles, Filter, BookOpen, Layers, QrCode, UserCheck, RefreshCw, GraduationCap, LogOut, ChevronLeft, ChevronRight, Hash } from 'lucide-react';
 import { Navbar } from '@/components/Navbar';
 import { Footer } from '@/components/Footer';
 import { BookCard } from '@/components/BookCard';
@@ -19,6 +19,13 @@ const CATEGORIES = [
   'Non-Fiction',
 ];
 
+const HM_RANGES = [
+  { label: 'All IDs', value: 'ALL' },
+  { label: 'HM 01 - 50', value: '1-50' },
+  { label: 'HM 51 - 100', value: '51-100' },
+  { label: 'HM 101 - 200', value: '101-200' },
+  { label: 'HM 201 - 315', value: '201-315' },
+];
 
 export default function PublicCatalogPage() {
   const { showToast } = useToast();
@@ -34,7 +41,12 @@ export default function PublicCatalogPage() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState<string>('ALL');
-  const [sortBy, setSortBy] = useState<'title' | 'author' | 'created_at'>('created_at');
+  const [selectedRange, setSelectedRange] = useState<string>('ALL');
+  const [sortBy, setSortBy] = useState<'title' | 'author' | 'registration_number' | 'created_at'>('registration_number');
+  
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(24);
 
   const loadCatalog = async () => {
     setLoading(true);
@@ -51,7 +63,6 @@ export default function PublicCatalogPage() {
   useEffect(() => {
     loadCatalog();
 
-    // Check if student is saved in localStorage
     const saved = localStorage.getItem('school_lib_active_student');
     if (saved) {
       try {
@@ -61,6 +72,11 @@ export default function PublicCatalogPage() {
       }
     }
   }, []);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedCategory, selectedStatus, selectedRange, sortBy, itemsPerPage]);
 
   const handleIdentifyStudent = (info: StudentInfo) => {
     setStudent(info);
@@ -93,11 +109,29 @@ export default function PublicCatalogPage() {
           book.category === selectedCategory ||
           (selectedCategory === 'Fiction' && (book.category === 'Fiction' || !!book.description?.includes('Genre: Fiction'))) ||
           (selectedCategory === 'Non-Fiction' && (book.category === 'Non-Fiction' || !!book.description?.includes('Genre: Non-Fiction')));
+        
         const matchesStatus = selectedStatus === 'ALL' || book.status === selectedStatus;
 
-        return matchesSearch && matchesCategory && matchesStatus;
+        let matchesRange = true;
+        if (selectedRange !== 'ALL') {
+          const digits = book.registration_number.replace(/\D/g, '');
+          if (digits) {
+            const val = parseInt(digits, 10);
+            if (selectedRange === '1-50') matchesRange = val >= 1 && val <= 50;
+            else if (selectedRange === '51-100') matchesRange = val >= 51 && val <= 100;
+            else if (selectedRange === '101-200') matchesRange = val >= 101 && val <= 200;
+            else if (selectedRange === '201-315') matchesRange = val >= 201 && val <= 315;
+          }
+        }
+
+        return matchesSearch && matchesCategory && matchesStatus && matchesRange;
       })
       .sort((a, b) => {
+        if (sortBy === 'registration_number') {
+          const numA = parseInt(a.registration_number.replace(/\D/g, '') || '0', 10);
+          const numB = parseInt(b.registration_number.replace(/\D/g, '') || '0', 10);
+          return numA - numB;
+        }
         let valA = a[sortBy] || '';
         let valB = b[sortBy] || '';
         if (typeof valA === 'string') valA = valA.toLowerCase();
@@ -106,13 +140,20 @@ export default function PublicCatalogPage() {
         if (valA > valB) return 1;
         return 0;
       });
-  }, [books, search, selectedCategory, selectedStatus, sortBy]);
+  }, [books, search, selectedCategory, selectedStatus, selectedRange, sortBy]);
+
+  // Pagination calculation
+  const totalPages = itemsPerPage > 0 ? Math.ceil(filteredBooks.length / itemsPerPage) || 1 : 1;
+  const paginatedBooks = useMemo(() => {
+    if (itemsPerPage <= 0) return filteredBooks;
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredBooks.slice(start, start + itemsPerPage);
+  }, [filteredBooks, currentPage, itemsPerPage]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#050814]">
       <Navbar />
 
-      {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* Student Check-In Banner Bar */}
         <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -178,21 +219,21 @@ export default function PublicCatalogPage() {
           <div className="absolute top-0 right-0 -mt-10 -mr-10 w-96 h-96 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
           <div className="relative z-10 max-w-3xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-semibold border border-amber-500/20 mb-4">
-              <Sparkles className="w-3.5 h-3.5" /> Oakridge Public Library Catalog
+              <Sparkles className="w-3.5 h-3.5" /> Oakridge Malayalam Library Catalog
             </div>
             <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
-              Explore Physical Books &amp; Digital Registrations
+              Explore 315+ Malayalam Books &amp; Literature
             </h1>
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-8">
-              Search our complete inventory of physical library acquisitions. Track shelf locations, availability, registration codes, and metadata in real-time.
+              Search our complete inventory of physical library acquisitions (HM 01 to HM 315). Track shelf locations, availability, registration codes, and metadata in real-time.
             </p>
 
-            {/* Front & Center Search Bar */}
+            {/* Search Bar */}
             <div className="relative max-w-2xl">
               <Search className="w-5 h-5 text-amber-400 absolute left-4 top-3.5 pointer-events-none" />
               <input
                 type="text"
-                placeholder="Search by title, author, category, ISBN, or registration # (e.g. LIB-2026-000101)..."
+                placeholder="Search by title, author, reg # (e.g. HM 01, HM 160, HM 315), or category..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-950/90 border border-slate-700/80 text-sm sm:text-base text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 shadow-xl transition-all"
@@ -206,6 +247,29 @@ export default function PublicCatalogPage() {
                 </button>
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Quick Range Jump Bar */}
+        <div className="mb-6 p-4 rounded-2xl bg-slate-900/60 border border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Hash className="w-4 h-4 text-amber-400" />
+            <span className="text-xs font-bold text-white uppercase tracking-wider">Quick Reg # Range Jump:</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {HM_RANGES.map((r) => (
+              <button
+                key={r.value}
+                onClick={() => setSelectedRange(r.value)}
+                className={`px-3 py-1 rounded-xl text-xs font-semibold transition-all ${
+                  selectedRange === r.value
+                    ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/20'
+                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -231,9 +295,8 @@ export default function PublicCatalogPage() {
             ))}
           </div>
 
-          {/* Status Filter & Sort Dropdown */}
+          {/* Status Filter, Sort & Display Count */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* Status Filter */}
             <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
               <Filter className="w-3.5 h-3.5 text-amber-400" />
               <select
@@ -249,7 +312,6 @@ export default function PublicCatalogPage() {
               </select>
             </div>
 
-            {/* Sort By */}
             <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
               <span className="text-xs text-slate-400 font-medium">Sort:</span>
               <select
@@ -257,9 +319,24 @@ export default function PublicCatalogPage() {
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="bg-transparent text-xs text-slate-300 focus:outline-none cursor-pointer"
               >
-                <option value="created_at" className="bg-slate-900">Newest First</option>
+                <option value="registration_number" className="bg-slate-900">Reg # (HM 01 - HM 315)</option>
                 <option value="title" className="bg-slate-900">Title (A-Z)</option>
                 <option value="author" className="bg-slate-900">Author (A-Z)</option>
+                <option value="created_at" className="bg-slate-900">Newest First</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-1.5 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
+              <span className="text-xs text-slate-400 font-medium">Show:</span>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                className="bg-transparent text-xs text-slate-300 focus:outline-none cursor-pointer"
+              >
+                <option value={24} className="bg-slate-900">24 / page</option>
+                <option value={48} className="bg-slate-900">48 / page</option>
+                <option value={96} className="bg-slate-900">96 / page</option>
+                <option value={-1} className="bg-slate-900">All ({filteredBooks.length})</option>
               </select>
             </div>
 
@@ -276,8 +353,30 @@ export default function PublicCatalogPage() {
         {/* Results Header Count */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-xs font-medium text-slate-400">
-            Showing <span className="text-amber-400 font-bold">{filteredBooks.length}</span> physical books in catalog
+            Showing <span className="text-amber-400 font-bold">{paginatedBooks.length}</span> of <span className="text-white font-bold">{filteredBooks.length}</span> matching books
           </p>
+
+          {totalPages > 1 && itemsPerPage > 0 && (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-amber-400 disabled:opacity-40 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <span className="text-xs font-semibold text-slate-300 font-mono">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-amber-400 disabled:opacity-40 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Catalog Grid */}
@@ -298,17 +397,44 @@ export default function PublicCatalogPage() {
               </div>
             ))}
           </div>
-        ) : filteredBooks.length > 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
-          >
-            {filteredBooks.map((book) => (
-              <BookCard key={book.id} book={book} onSelect={setSelectedBook} />
-            ))}
-          </motion.div>
+        ) : paginatedBooks.length > 0 ? (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"
+            >
+              {paginatedBooks.map((book) => (
+                <BookCard key={book.id} book={book} onSelect={setSelectedBook} />
+              ))}
+            </motion.div>
+
+            {/* Pagination Controls Footer */}
+            {totalPages > 1 && itemsPerPage > 0 && (
+              <div className="flex items-center justify-center gap-3 pt-6 border-t border-slate-800">
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-amber-400 disabled:opacity-40 transition-colors flex items-center gap-1"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Previous
+                </button>
+
+                <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-900 rounded-xl border border-slate-800 text-xs text-slate-400 font-mono">
+                  <span>Page <strong className="text-amber-400">{currentPage}</strong> of <strong className="text-white">{totalPages}</strong></span>
+                </div>
+
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-amber-400 disabled:opacity-40 transition-colors flex items-center gap-1"
+                >
+                  Next <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-12 text-center max-w-lg mx-auto my-12">
             <BookOpen className="w-12 h-12 text-slate-600 mx-auto mb-4" />
@@ -321,16 +447,16 @@ export default function PublicCatalogPage() {
                 setSearch('');
                 setSelectedCategory('ALL');
                 setSelectedStatus('ALL');
+                setSelectedRange('ALL');
               }}
               className="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 transition-colors"
             >
-              Reset Filters
+              Reset All Filters
             </button>
           </div>
         )}
       </main>
 
-      {/* Student Check-In Modal */}
       <StudentIdentifyModal
         isOpen={isStudentModalOpen}
         onClose={() => setIsStudentModalOpen(false)}
@@ -338,7 +464,6 @@ export default function PublicCatalogPage() {
         currentStudent={student}
       />
 
-      {/* Book Metadata & Borrowing Detail Modal */}
       <BookDetailModal
         book={selectedBook}
         onClose={() => setSelectedBook(null)}

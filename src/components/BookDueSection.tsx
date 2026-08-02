@@ -71,6 +71,10 @@ export function BookDueSection({ onDataChange }: BookDueSectionProps) {
   }, []);
 
   const handleConfirmAdminReturn = async () => {
+    if (!isAdmin) {
+      showToast('Access Denied', 'Book returns can ONLY be performed by an authenticated Admin/Librarian.', 'error');
+      return;
+    }
     if (!verifyingBorrow) return;
     setActionLoading(verifyingBorrow.id);
 
@@ -97,6 +101,10 @@ export function BookDueSection({ onDataChange }: BookDueSectionProps) {
   };
 
   const handlePayFine = async (borrowId: string, studentName: string, amount: number) => {
+    if (!isAdmin) {
+      showToast('Access Denied', 'Fine settlements can ONLY be performed by an authenticated Admin/Librarian.', 'error');
+      return;
+    }
     setActionLoading(borrowId);
     try {
       await payBorrowFine(borrowId);
